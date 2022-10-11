@@ -170,7 +170,7 @@ endif
 
 .PHONY: deps
 deps: ## Ensures fresh go.mod and go.sum.
-	@go mod tidy
+	@go mod download
 	@go mod verify
 
 # NOTICE: This is a temporary workaround for the cyclic dependency issue documented in:
