@@ -203,6 +203,9 @@ func parseTransportConfiguration(downstreamTripperConfContentYaml []byte) (*http
 		if tripperConfig.MaxConnsPerHost != nil {
 			downstreamTripper.MaxConnsPerHost = *tripperConfig.MaxConnsPerHost
 		}
+		if tripperConfig.TLSConfig != nil {
+			downstreamTripper.TLSClientConfig = tripperConfig.TLSConfig
+		}
 	}
 
 	return downstreamTripper, nil
