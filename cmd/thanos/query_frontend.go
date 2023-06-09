@@ -16,6 +16,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
+	config_util "github.com/prometheus/common/config"
 	"github.com/weaveworks/common/user"
 	"gopkg.in/yaml.v2"
 
@@ -204,7 +205,17 @@ func parseTransportConfiguration(downstreamTripperConfContentYaml []byte) (*http
 			downstreamTripper.MaxConnsPerHost = *tripperConfig.MaxConnsPerHost
 		}
 		if tripperConfig.TLSConfig != nil {
-			downstreamTripper.TLSClientConfig = tripperConfig.TLSConfig
+			tlsConfig, err := config_util.NewTLSConfig(&config_util.TLSConfig{
+				CAFile:             tripperConfig.TLSConfig.CAFile,
+				CertFile:           tripperConfig.TLSConfig.CertFile,
+				KeyFile:            tripperConfig.TLSConfig.KeyFile,
+				ServerName:         tripperConfig.TLSConfig.ServerName,
+				InsecureSkipVerify: tripperConfig.TLSConfig.InsecureSkipVerify,
+			})
+			if err != nil {
+				return nil, err
+			}
+			downstreamTripper.TLSClientConfig = tlsConfig
 		}
 	}
 

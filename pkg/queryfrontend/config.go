@@ -4,7 +4,6 @@
 package queryfrontend
 
 import (
-	"crypto/tls"
 	"strings"
 	"time"
 
@@ -22,6 +21,7 @@ import (
 	"github.com/thanos-io/thanos/internal/cortex/util/flagext"
 	cortexvalidation "github.com/thanos-io/thanos/internal/cortex/util/validation"
 	"github.com/thanos-io/thanos/pkg/cacheutil"
+	"github.com/thanos-io/thanos/pkg/httpconfig"
 	"github.com/thanos-io/thanos/pkg/model"
 )
 
@@ -183,14 +183,14 @@ func NewCacheConfig(logger log.Logger, confContentYaml []byte) (*cortexcache.Con
 
 // DownstreamTripperConfig stores the http.Transport configuration for query-frontend's HTTP downstream tripper.
 type DownstreamTripperConfig struct {
-	IdleConnTimeout       prommodel.Duration `yaml:"idle_conn_timeout"`
-	ResponseHeaderTimeout prommodel.Duration `yaml:"response_header_timeout"`
-	TLSHandshakeTimeout   prommodel.Duration `yaml:"tls_handshake_timeout"`
-	ExpectContinueTimeout prommodel.Duration `yaml:"expect_continue_timeout"`
-	MaxIdleConns          *int               `yaml:"max_idle_conns"`
-	MaxIdleConnsPerHost   *int               `yaml:"max_idle_conns_per_host"`
-	MaxConnsPerHost       *int               `yaml:"max_conns_per_host"`
-	TLSConfig             *tls.Config        `yaml:"tls_config"`
+	IdleConnTimeout       prommodel.Duration    `yaml:"idle_conn_timeout"`
+	ResponseHeaderTimeout prommodel.Duration    `yaml:"response_header_timeout"`
+	TLSHandshakeTimeout   prommodel.Duration    `yaml:"tls_handshake_timeout"`
+	ExpectContinueTimeout prommodel.Duration    `yaml:"expect_continue_timeout"`
+	MaxIdleConns          *int                  `yaml:"max_idle_conns"`
+	MaxIdleConnsPerHost   *int                  `yaml:"max_idle_conns_per_host"`
+	MaxConnsPerHost       *int                  `yaml:"max_conns_per_host"`
+	TLSConfig             *httpconfig.TLSConfig `yaml:"tls_config"`
 
 	CachePathOrContent extflag.PathOrContent
 }
