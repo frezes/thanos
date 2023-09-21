@@ -71,6 +71,7 @@ func NewTripperware(config Config, reg prometheus.Registerer, logger log.Logger)
 		return nil, err
 	}
 	queryInstantTripperware := newInstantQueryTripperware(
+		config.MaxRetries,
 		config.NumShards,
 		queryRangeLimits,
 		queryInstantCodec,
@@ -322,6 +323,7 @@ func newLabelsTripperware(
 
 func newInstantQueryTripperware(
 	numShards int,
+	maxRetries int,
 	limits queryrange.Limits,
 	codec queryrange.Codec,
 	reg prometheus.Registerer,
@@ -335,6 +337,14 @@ func newInstantQueryTripperware(
 			instantQueryMiddlewares,
 			queryrange.InstrumentMiddleware("sharding", m),
 			PromQLShardingMiddleware(analyzer, numShards, limits, codec, reg),
+		)
+	}
+
+	if maxRetries > 0 {
+		instantQueryMiddlewares = append(
+			instantQueryMiddlewares,
+			queryrange.InstrumentMiddleware("retry", m),
+			queryrange.NewRetryMiddleware(log.NewNopLogger(), maxRetries, queryrange.NewRetryMiddlewareMetrics(reg)),
 		)
 	}
 
